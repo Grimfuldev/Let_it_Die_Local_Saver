@@ -2,7 +2,7 @@
 A tool to automatically locally export the save file of let it die from Steam.
 
 The point of this program is to be the least invasive possible so you can forget about saving backups or managing settings. Everything is automatic and only in background after it’s configured. It works like an offline cloud backup that manages itself.
-<img width="915" height="585" alt="image" src="https://github.com/user-attachments/assets/0ac575a3-e442-412d-bd19-ee2447325745" />
+<img width="1034" height="658" alt="image" src="https://github.com/user-attachments/assets/21d12c07-4af6-4d4c-9c90-d30f207f1165" />
 
 
 LET IT DIE launcher
