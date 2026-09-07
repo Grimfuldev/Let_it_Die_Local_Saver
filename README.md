@@ -123,4 +123,3 @@ SOURCE is the folder, not the file.
 Steam save folder is usually:
 yourSteamFolder\steamapps\common\LET IT DIE\Savedata
 Inside that there is a .sav with a long number. Point SOURCE at Savedata folder.
-If you close the game and open it again before FLUSH_WAIT finishes, don't start a second copy of the launcher. The first one is still waiting to copy. If the game is already open again, it skips that backup and waits until you quit that session.
