@@ -446,18 +446,47 @@ def pid_alive(pid: int) -> bool:
         return False
 
 
-def acquire_launch_lock() -> bool:
+def read_lock_pid() -> int:
     path = lock_path()
-    if os.path.isfile(path):
-        try:
-            old = int(open(path, "r", encoding="utf-8").read().strip() or "0")
-        except Exception:
-            old = 0
-        if pid_alive(old) and old != os.getpid():
-            return False
+    if not os.path.isfile(path):
+        return 0
     try:
-        with open(path, "w", encoding="utf-8") as fh:
-            fh.write(str(os.getpid()))
+        return int(open(path, "r", encoding="utf-8").read().strip() or "0")
+    except Exception:
+        return 0
+
+
+def write_lock_pid(pid: int) -> None:
+    with open(lock_path(), "w", encoding="utf-8") as fh:
+        fh.write(str(pid))
+
+
+def kill_pid(pid: int) -> None:
+    if pid <= 0 or pid == os.getpid():
+        return
+    try:
+        subprocess.run(
+            ["taskkill", "/PID", str(pid), "/F"],
+            creationflags=NO_WINDOW,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except Exception:
+        pass
+    for _ in range(20):
+        if not pid_alive(pid):
+            return
+        time.sleep(0.1)
+
+
+def acquire_launch_lock(steal: bool = False) -> bool:
+    old = read_lock_pid()
+    if old and pid_alive(old) and old != os.getpid():
+        if not steal:
+            return False
+        kill_pid(old)
+    try:
+        write_lock_pid(os.getpid())
         return True
     except Exception:
         return True
@@ -500,9 +529,10 @@ def launch_game(cfg: dict) -> None:
     if not os.path.isfile(steam):
         raise RuntimeError(f"Steam not found:\n{steam}")
     wait = int(cfg.get("FLUSH_WAIT") or FLUSH_DEFAULT)
-    subprocess.Popen([steam, "-applaunch", appid], close_fds=True)
-    if not process_running(exe) and not wait_spawn(exe):
-        raise RuntimeError(f"process not found: {exe}")
+    if not process_running(exe):
+        subprocess.Popen([steam, "-applaunch", appid], close_fds=True)
+        if not wait_spawn(exe):
+            raise RuntimeError(f"process not found: {exe}")
     while True:
         wait_process_end(exe)
         if flush_or_reopened(exe, wait):
@@ -827,18 +857,8 @@ def main() -> int:
     root = tk.Tk()
     root.withdraw()
     apply_window_chrome(root, cfg)
-    if not acquire_launch_lock():
-        wait = cfg.get("FLUSH_WAIT") or FLUSH_DEFAULT
-        messagebox.showinfo(
-            "LET IT DIE launcher",
-            "The launcher is already running.\n\n"
-            "If you just quit, it is waiting "
-            f"{wait} seconds so the save can flush, then it copies backups.\n"
-            "Do not start a second copy. Wait for that to finish.\n\n"
-            "If you already opened the game again, the first launcher will "
-            "skip this backup and wait until you quit that session.",
-        )
-        return 0
+    if not acquire_launch_lock(steal=False):
+        acquire_launch_lock(steal=True)
 
     try:
         if created:
