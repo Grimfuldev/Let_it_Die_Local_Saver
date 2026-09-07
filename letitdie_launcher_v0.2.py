@@ -14,6 +14,7 @@ from tkinter import filedialog, messagebox
 # Constants
 # ---------------------------------------------------------------------------
 
+VERSION = "v0.2"
 APPID_DEFAULT = "794600"
 EXE_DEFAULT = "BrgGame-Steam.exe"
 FLUSH_DEFAULT = "15"
@@ -648,7 +649,7 @@ def open_about() -> None:
 class SettingsForm(tk.Toplevel):
     def __init__(self, master: tk.Tk, cfg: dict, ini_path: str):
         super().__init__(master)
-        self.title("LET IT DIE launcher settings")
+        self.title(f"LET IT DIE launcher settings {VERSION}")
         self.resizable(False, False)
         self.geometry("920x560")
         self.result = "cancel"
@@ -680,6 +681,7 @@ class SettingsForm(tk.Toplevel):
         for text, cmd in actions:
             cv.create_window(x, y + 10, anchor="nw", window=style_action(cv, text, cmd), height=32)
             x += 176
+        cv.create_text(892, y + 52, anchor="se", fill=TEXT_FG, font=("Segoe UI", 9), text=VERSION)
         self.protocol("WM_DELETE_WINDOW", lambda: self.finish("cancel"))
         apply_window_chrome(self, cfg)
         self.grab_set()
@@ -719,7 +721,7 @@ class SettingsForm(tk.Toplevel):
 class Splash(tk.Toplevel):
     def __init__(self, master: tk.Tk, cfg: dict):
         super().__init__(master)
-        self.title("LET IT DIE")
+        self.title(f"LET IT DIE {VERSION}")
         self.resizable(False, False)
         self.result = "launch"
         self.left = 3
@@ -729,6 +731,7 @@ class Splash(tk.Toplevel):
         self._splash_cv = cv
         self._count_id = cv.create_text(260, 90, text="3", fill=TEXT_FG, font=("Segoe UI", 72, "bold"))
         cv.create_text(260, 175, text="Game launching", fill=TEXT_FG, font=("Segoe UI", 16))
+        cv.create_text(500, 340, anchor="se", fill=TEXT_FG, font=("Segoe UI", 9), text=VERSION)
         cv.create_window(
             260, 250,
             window=style_action(cv, "Click here to open settings", self.open_settings),
