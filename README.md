@@ -80,3 +80,8 @@ Tower_of_Barbs_Painting_ready.png   window background
 let it die cursor.png               in-window cursor
 uncle glasses ready.png             window icon
 letitdie.ico                        shortcut / exe icon
+
+-----------------
+Background is an original edit of a public-domain Tower of Babel painting.
+Other UI art is fanmade.
+LET IT DIE game is © GungHo / Supertrick. This project is unofficial.
