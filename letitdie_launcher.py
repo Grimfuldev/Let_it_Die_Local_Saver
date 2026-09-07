@@ -14,7 +14,7 @@ from tkinter import filedialog, messagebox
 # Constants
 # ---------------------------------------------------------------------------
 
-VERSION = "v0.2"
+VERSION = "v0.3"
 APPID_DEFAULT = "794600"
 EXE_DEFAULT = "BrgGame-Steam.exe"
 FLUSH_DEFAULT = "15"
@@ -533,7 +533,7 @@ def launch_game(cfg: dict) -> None:
     if not process_running(exe):
         subprocess.Popen([steam, "-applaunch", appid], close_fds=True)
         if not wait_spawn(exe):
-            raise RuntimeError(f"process not found: {exe}")
+            return
     while True:
         wait_process_end(exe)
         if flush_or_reopened(exe, wait):
@@ -542,12 +542,20 @@ def launch_game(cfg: dict) -> None:
         return
 
 
+def shortcut_icon_target(preferred: str) -> str:
+    if preferred and os.path.isfile(preferred) and preferred.lower().endswith(".ico"):
+        return preferred
+    if getattr(sys, "frozen", False):
+        return sys.executable
+    return bundled_ico()
+
+
 def create_shortcut(ico_path: str) -> tuple[bool, str]:
     desktop = os.path.join(os.path.expanduser("~"), "Desktop")
     if not os.path.isdir(desktop):
         desktop = os.path.join(os.environ.get("USERPROFILE", ""), "Desktop")
     lnk = os.path.join(desktop, "LET IT DIE.lnk")
-    icon = ico_path if ico_path and os.path.isfile(ico_path) else bundled_ico()
+    icon = shortcut_icon_target(ico_path)
     icon_ok = bool(icon and os.path.isfile(icon))
     icon_line = f'$s.IconLocation = "{icon},0"' if icon_ok else ""
     target, work = launcher_target(), app_dir()
@@ -651,26 +659,22 @@ class SettingsForm(tk.Toplevel):
         super().__init__(master)
         self.title(f"LET IT DIE launcher settings {VERSION}")
         self.resizable(False, False)
-        self.geometry("920x560")
+        self.geometry("1040x640")
         self.result = "cancel"
         self.cfg = dict(cfg)
         self.vars: dict[str, tk.StringVar] = {}
-        cv = paint_background(self, 920, 560)
-        cv.create_text(
-            28, 28, anchor="nw", fill=TEXT_FG, font=("Segoe UI", 10),
-            text="Accept and Activate saves and launches. Save and close saves and exits.",
-        )
-        y = 64
+        cv = paint_background(self, 1040, 640)
+        y = 36
         for key, kind in SETTING_ROWS:
-            cv.create_text(28, y + 10, anchor="w", fill=TEXT_FG, font=("Segoe UI", 10), text=key)
+            cv.create_text(36, y + 14, anchor="w", fill=TEXT_FG, font=("Segoe UI", 11), text=key)
             var = tk.StringVar(value=cfg.get(key, DEFAULTS.get(key, "")))
             self.vars[key] = var
-            cv.create_window(220, y, anchor="nw", window=style_entry(cv, var), width=520, height=26)
+            cv.create_window(230, y, anchor="nw", window=style_entry(cv, var), width=640, height=34)
             if kind != "none":
                 btn = style_action(cv, "Browse", lambda k=key, t=kind: self.browse(k, t))
-                cv.create_window(752, y, anchor="nw", window=btn, height=26)
-            y += 38
-        x = 28
+                cv.create_window(890, y, anchor="nw", window=btn, width=110, height=34)
+            y += 52
+        x = 36
         actions = (
             ("Accept and Activate", lambda: self.finish("activate")),
             ("Save settings and close", lambda: self.finish("saveonly")),
@@ -679,9 +683,9 @@ class SettingsForm(tk.Toplevel):
             ("About", open_about),
         )
         for text, cmd in actions:
-            cv.create_window(x, y + 10, anchor="nw", window=style_action(cv, text, cmd), height=32)
-            x += 176
-        cv.create_text(892, y + 52, anchor="se", fill=TEXT_FG, font=("Segoe UI", 9), text=VERSION)
+            cv.create_window(x, y + 16, anchor="nw", window=style_action(cv, text, cmd), height=40)
+            x += 200
+        cv.create_text(1010, 620, anchor="se", fill=TEXT_FG, font=("Segoe UI", 10), text=VERSION)
         self.protocol("WM_DELETE_WINDOW", lambda: self.finish("cancel"))
         apply_window_chrome(self, cfg)
         self.grab_set()
