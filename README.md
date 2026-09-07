@@ -8,7 +8,7 @@ LET IT DIE launcher
 
 Launch LET IT DIE through Steam, wait until you quit, then copy local
 saves. The offline edition has no Steam Cloud, so this is does backups.
-Important note: You have to generate a shortcut and launch the game through it for this program to function.
+Important note: You have to generate a shortcut (once) and launch the game through it for this program to function.
 
 How a launch works
 ------------------
