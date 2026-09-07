@@ -7,7 +7,7 @@ LET IT DIE launcher
 ===================
 
 Launch LET IT DIE through Steam, wait until you quit, then copy local
-saves. The offline edition has no Steam Cloud, so this is does backups.
+saves. The offline edition has no Steam Cloud, so this does backups.
 
 **Important:** Create a shortcut once (Create shortcut in settings), then launch from that shortcut or from the exe. Steam’s own Play button does not run this backup.
 
@@ -18,7 +18,7 @@ How a launch works
 2. If INI_PATH points at another ini and that file exists, that file wins.
 3. EDIT_SETTINGS=0  -> skip splash, start the game.
    EDIT_SETTINGS=1  -> 3 second splash. Click to open settings.
-4. After the game process exits, wait FLUSH_WAIT seconds, then it copy saves.
+4. After the game process exits, wait FLUSH_WAIT seconds, then it copies saves.
 
 settings.ini keys
 -----------------
