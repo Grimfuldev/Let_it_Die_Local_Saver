@@ -85,3 +85,34 @@ letitdie.ico                        shortcut / exe icon
 Background is an original edit of a public-domain Tower of Babel painting.
 Other UI art is fanmade.
 LET IT DIE game is © GungHo / Supertrick. This project is unofficial.
+
+--------------------------------------------------------------
+Step 1:
+Get it on Github (Releases, the exe file): https://github.com/Grimfuldev/Let_it_Die_Local_Saver/releases/latest
+You can put the exe wherever you want. DEST in the settings is the backup folder, it does not have to be the same place as the exe.
+Step 2:
+Start the program. If you didn't already have a settings.ini next to it, it throws an alert and generates a new one.
+
+That ini is where the launch parameters and backup path live. Keep it next to the program, or set INI_PATH if you want the ini somewhere else.
+If an ini already exists, it tries to launch the game in 3 seconds unless you click the button to open settings.
+Step 3:
+Fill the paths. There is an ABOUT on Github that explains each field if you don't know what something does.
+Step 4:
+Press Accept and Activate or Save settings and close so the ini actually gets written.
+
+Create shortcut is optional. It drops a shortcut on the desktop with a custom ico. Use the exe or that shortcut to start the game when you want backups. Steam Play does not run the backup script.
+Step 5:
+If you only hit Save settings and close, start the exe (or the shortcut) again. Wait the 3 seconds and it launches.
+
+You can skip that wait by editing the ini and setting EDIT_SETTINGS=1 to EDIT_SETTINGS=0. To see the settings window again, put it back to 1.
+Step 6:
+Play normally. After you close the game it waits FLUSH_WAIT seconds, then copies the save from SOURCE into the backup folder you set.
+
+After that you don't touch settings again. Just launch this program every time instead of Play button in Steam.
+NOTE:
+SOURCE is the folder, not the file.
+
+Steam save folder is usually:
+yourSteamFolder\steamapps\common\LET IT DIE\Savedata
+Inside that there is a .sav with a long number. Point SOURCE at Savedata folder.
+If you close the game and open it again before FLUSH_WAIT finishes, don't start a second copy of the launcher. The first one is still waiting to copy. If the game is already open again, it skips that backup and waits until you quit that session.
